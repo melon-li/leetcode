@@ -1,0 +1,14 @@
+#!/bin/bash
+arr=($1)
+filename=""
+for e in ${arr[*]}
+do
+    if [[ "$filename" == "" ]];then
+        filename="$e"    
+    else
+        filename="$filename""-$e"    
+    fi
+done
+filename="$filename"".cc"
+echo "Create code file:$filename"
+touch "$filename"
