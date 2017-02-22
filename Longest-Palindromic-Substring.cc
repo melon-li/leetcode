@@ -15,7 +15,6 @@
 //Output: "bb"
 
 
-
 class Solution {
 public:
     string longestPalindrome(string s) {
@@ -31,10 +30,13 @@ public:
 
 private:
     int expandAroundCenter(const string &s, int i){
-        int L = i, R = i, len1 = 1, len2 = 0;
-        while(--L >=0 && ++R < s.length() && s[L] == s[R]) len1 += 2;
-        L = i; R = i + 1;
-        while(L >=0 && R < s.length() && s[L--] == s[R++]) len2 += 2;
+        int L = i, R = i, len1 = 0, len2 = 0;
+        while(L >=0 && R < s.length() && s[L] == s[R]){L--;R++;} ;
+        len1 = R - L - 1;
+        L = i; 
+        R = i + 1;
+        while(L >=0 && R < s.length() && s[L] == s[R]) {L--;R++;};
+        len2 = R - L - 1;
         int len = len1 > len2 ? len1: len2;
         return len;
     }
