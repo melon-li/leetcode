@@ -1,4 +1,6 @@
 #include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
 #include <cstring>
 using namespace std;
 
@@ -35,5 +37,6 @@ using namespace std;
     }
 
 int main(){
-    cout<<longestPalindrome("abada")<<endl;
+    //cout<<longestPalindrome("abada")<<endl;
+    cout<<atoi(" +3aa")<<endl;
 }

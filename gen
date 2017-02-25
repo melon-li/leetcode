@@ -10,5 +10,5 @@ do
     fi
 done
 filename="$filename"".cc"
-echo "Create code file:$filename"
+echo "$filename is created!"
 touch "$filename"
