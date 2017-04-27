@@ -1,42 +1,43 @@
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
+#include <vector>
 #include <cstring>
+#include <algorithm>
 using namespace std;
 
-    int expandAroundCenter(const string &s, int i){
-        int L = i, R = i, len1 = 1, len2 = 0;
-        cout<<"i="<<i<<endl;
-        while(L >=0 && R < s.length() && s[L] == s[R]){
-            cout<<"L="<<L<<"R="<<R<<endl;
-            L--;
-            R++;
-        }
-        len1 = R - L  -1;
-        cout<<"len1="<<len1<<endl;
-        L = i; R = i + 1;
-        while(L >=0 && R < s.length() && s[L--] == s[R++]) len2 += 2;
-        int len = len1 > len2 ? len1: len2;
-        cout<<"len="<<len<<endl;
-        return len;
-    }
-    string longestPalindrome(string s) {
-        int start = 0, size = 0, len = 0;
-        for(int i=0; i<s.length(); i++){
-            len = expandAroundCenter(s, i);
-            if(len <= size) continue;
-            start = i - (len-1)/2;
-            size = len;
-            cout<<"start="<<start<<endl;
-            cout<<"len_final="<<len<<endl;
-        }
 
-            cout<<"start="<<start<<endl;
-            cout<<"len_final="<<len<<endl;
-        return s.substr(start, len);
+    int threeSumClosest(vector<int>& nums, int target) {
+        sort(nums.begin(), nums.end());
+        int res = nums[0] + nums[1] + nums[2];
+        int i = 0;
+        for (i = 0; i < nums.size(); i++) {
+            int front = i + 1;
+            int back = nums.size() - 1;
+            int sum = nums[i];
+            while (front < back) {
+                sum = nums[i] + nums[front] + nums[back];
+                cout<<"res"<<res<<"sum="<<sum<<"front="<<front<<"back="<<back<<endl;
+                if (sum < target){
+                    front++;
+                }else if (sum > target){
+                    back--;
+                }else {
+                    return target;
+                }
+                if (abs(sum - target) < abs(res - target)) res = sum;
+            }
+            if ((i+3) >= nums.size()) return res;
+            
+        }
+        
+        return res; 
     }
-
 int main(){
-    //cout<<longestPalindrome("abada")<<endl;
-    cout<<atoi(" +3aa")<<endl;
+    vector<int> nums;
+    nums.push_back(1);
+    nums.push_back(1);
+    nums.push_back(1);
+    nums.push_back(1);
+    cout<<threeSumClosest(nums, 100)<<endl;
 }

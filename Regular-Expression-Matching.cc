@@ -17,93 +17,52 @@
 // isMatch("ab", ".*") → true
 // isMatch("aab", "c*a*b") → true
 
+//This problem has a typical solution using Dynamic Programming. We define the state P[i][j] to be true if s[0..i) matches p[0..j) and false otherwise. Then the state equations are:
+
+    //P[i][j] = P[i - 1][j - 1], if p[j - 1] != '*' && (s[i - 1] == p[j - 1] || p[j - 1] == '.');
+    //P[i][j] = P[i][j - 2], if p[j - 1] == '*' and the pattern repeats for 0 times;
+    //P[i][j] = P[i - 1][j] && (s[i - 1] == p[j - 2] || p[j - 2] == '.'), if p[j - 1] == '*' and the pattern repeats for at least 1 times.
+
+//Putting these together, we will have the following code.
+
+// Dynamic Programing
 class Solution {
 public:
     bool isMatch(string s, string p) {
-        int pos = p.find("*");
-        string pfront, sfront;
-        while (pos >= 0) {
-            if (pos == 0) {
-                p = p.substr(1);
-                pos = p.find("*");
-                continue;
-            } else if (pos >= 2) {
-                if (s.length() < (pos - 1)) return false;
-                pfront = p.substr(0, pos - 1);
-                sfront = s.substr(0, pos - 1);
-                if (!isMatchFront(sfront, pfront)) return false;
-                s = s.substr(pos - 1);
-                p = p.substr(pos - 1);
+        int n = s.length(), m = p.length();
+        bool dp[n+1][m+1] = {{false}};
+        dp[0][0] = true;
+        for (int i = 0; i < n+1; i++){
+            for (int j = 1; j < m+1; j++){
+                if ('*' == p[j-1]){
+                    dp[i][j] = (s[i-1] == p[j-2] || '.' == p[j-2]) && dp[i-1][j-2] 
+                               || dp[i][j-2]
+                } else {
+                    dp[i][j] =  i > 0 
+                                && (s[i-1] == p[j-1] || p[j-1] == '.')
+                                && dp[i-1][j-1]
+                }
             }
-             if (!isMatchBack(s, p)) return false;
-             pos = p.find("*");
         }
-        return isMatchFront(s, p);
     }
+};
 
-    bool isMatchBack(string &s, string &p){
-        char key = p[0], edge; 
-        int i = 0, j = 2;
-        if (key == '.') key = s[0];
-        if (key != s[0]){
-            p = p.substr(2);
-            return true;
-        }
-        if (p.length() <= 2){
-            if( p[0] == '.'){
-                p = s = "";
-                return true;
-            }
-            for (i = 0; i < s.length(); i++)
-                if (s[i] != key) return false;
-            p = s = "";
-            return true;
-        }
 
-        for (j=2; j < p.length(); j++){
-            if (p[j] == '*') continue;
-            if (p[j] != key) break;
-        }
-        if (j >= p.length()) {
-            if (p[0] == '.'){
-                p = s = "";
-                return true;
-            }
-            for (i = 0; i < s.length(); i++)
-                if (s[i] != key) return false;
-            p = s = "";
-            return true;
-        }
-        edge = p[j];
-
-        for (i = 0; i < s.length(); i++) {
-            if (key == s[i]) continue;
-            if (edge == s[i]) break;
-        }
-        if (i >= s.length()) return false;
-        s = s.substr(i);
-        p = p.substr(j);
-        return true;
-    }
-
-    bool isMatchFront(string s, string p) {
-        int pos = 0;
-        string pfront, sfront;
-        if (s.length() != p.length()) return false;
-        if (p.find(".") < 0) {
-            if (s != p) return false;
-            return true;
-        }
-        pos = p.find(".");
-        while (pos >= 0) {
-            pfront = p.substr(0, pos);
-            sfront = s.substr(0, pos);
-            if (pfront != sfront) return false;
-            p = p.substr(pos + 1);
-            s = s.substr(pos + 1);
-            pos = p.find(".");
-        }
-        if (s != p) return false;
-        return true;
+// Recursive algorithm
+class Solution {
+public:
+    bool isMatch(string s, string p) {
+        if (p.empty())    return s.empty();
+        
+        if ('*' == p[1])
+            // x* matches empty string or at least one character: x* -> xx*
+            // *s is to ensure s is non-empty
+            return (isMatch(s, p.substr(2)) 
+                    || !s.empty() && (s[0] == p[0] || '.' == p[0]) 
+                                  && isMatch(s.substr(1), p));
+        else
+            return !s.empty() 
+                   && (s[0] == p[0] || '.' == p[0]) 
+                   && isMatch(s.substr(1), p.substr(1));
     }
 };
